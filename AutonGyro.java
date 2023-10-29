@@ -93,10 +93,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 public class AutonGyro extends LinearOpMode {
 
     /* Declare OpMode members. */
-    private DcMotor         motorFrontLeft   = null;
-    private DcMotor         motorFrontRight  = null;
-    private DcMotor         motorRearLeft    = null;
-    private DcMotor         motorRearRight   = null;
+
     private IMU             imu         = null;      // Control/Expansion Hub IMU
 
     private double          headingError  = 0;
@@ -142,18 +139,9 @@ public class AutonGyro extends LinearOpMode {
 
         // Initialize the drive system variables.
 
-        motorFrontLeft = hardwareMap.get(DcMotor.class, "motorFrontLeft");
-        motorFrontRight = hardwareMap.get(DcMotor.class, "motorFrontRight");
-        motorRearLeft = hardwareMap.get(DcMotor.class, "motorRearLeft");
-        motorRearRight = hardwareMap.get(DcMotor.class, "motorRearRight");
-
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
-        motorRearLeft.setDirection(DcMotor.Direction.REVERSE);
-        motorRearRight.setDirection(DcMotor.Direction.FORWARD);
         /* The next two lines define Hub orientation.
          * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
          *
@@ -169,10 +157,7 @@ public class AutonGyro extends LinearOpMode {
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
         // Ensure the robot is stationary.  Reset the encoders and set the motors to BRAKE mode
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
@@ -181,8 +166,7 @@ public class AutonGyro extends LinearOpMode {
         }
 
         // Set the encoders for closed loop speed control, and reset the heading.
-        motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         imu.resetYaw();
 
         // Step through each leg of the path,
@@ -193,6 +177,7 @@ public class AutonGyro extends LinearOpMode {
          * THIS IS WHERE YOU CODE AUTON
          *
          */
+
         driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
         turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
         holdHeading( TURN_SPEED, -45.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
@@ -242,8 +227,9 @@ public class AutonGyro extends LinearOpMode {
 
             // Determine new target position, and pass to motor controller
             int moveCounts = (int)(distance * COUNTS_PER_INCH);
-            leftTarget = motorLeft.getCurrentPosition() + moveCounts;
-            rightTarget = motorRight.getCurrentPosition() + moveCounts;
+            leftT = hardwareMap.
+            leftTarget = motorFrontLeft.getCurrentPosition() + moveCounts;
+            rightTarget = hardwareMap.motorFrontRight() + moveCounts;
 
             // Set Target FIRST, then turn on RUN_TO_POSITION
             motorLeft.setTargetPosition(leftTarget);
